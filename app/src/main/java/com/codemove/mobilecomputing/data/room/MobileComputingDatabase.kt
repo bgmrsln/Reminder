@@ -11,7 +11,7 @@ import com.codemave.mobilecomputing.data.entity.Task
  */
 @Database(
     entities = [Category::class, Task::class, LoginInfo::class],
-    version = 3,
+    version = 9,
     exportSchema = false
 )
 abstract class MobileComputingDatabase : RoomDatabase() {

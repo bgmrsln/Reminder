@@ -25,11 +25,8 @@ fun Signup(
     onBackPress: () -> Unit,
     viewModel: LoginInfoViewModel = viewModel()
 ) {
-    //val viewState by viewModel.state.collectAsState()
+
     val coroutineScope = rememberCoroutineScope()
-    //val username = rememberSaveable { mutableStateOf("") }
-    //val password = rememberSaveable { mutableStateOf("") }
-    //val amount = rememberSaveable { mutableStateOf("") }
     Surface(modifier = Modifier.fillMaxSize()) {
         val username = rememberSaveable { mutableStateOf("") }
         val password = rememberSaveable { mutableStateOf("") }

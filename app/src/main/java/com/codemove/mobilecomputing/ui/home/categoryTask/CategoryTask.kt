@@ -27,10 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.codemave.mobilecomputing.R
 import com.codemave.mobilecomputing.data.entity.Category
 import com.codemave.mobilecomputing.data.entity.Task
 import com.codemave.mobilecomputing.data.room.TaskToCategory
+
 import com.codemave.mobilecomputing.util.viewModelProviderFactoryOf
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -39,7 +41,8 @@ import java.util.*
 @Composable
 fun CategoryTask(
     categoryId: Long,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     val viewModel: CategoryTaskViewModel = viewModel(
         key = "category_list_$categoryId",
@@ -50,7 +53,8 @@ fun CategoryTask(
     Column(modifier = modifier) {
         TaskList(
             list = viewState.tasks,
-            viewModel = viewModel
+            viewModel = viewModel,
+            navController = navController
         )
     }
 }
@@ -58,7 +62,8 @@ fun CategoryTask(
 @Composable
 private fun TaskList(
     list: List<TaskToCategory>,
-    viewModel: CategoryTaskViewModel
+    viewModel: CategoryTaskViewModel,
+    navController: NavController
 
 ) {
     LazyColumn(
@@ -70,7 +75,8 @@ private fun TaskList(
             TaskListItem(
                 task = item.task,
                 category = item.category,
-                onClick = {},
+                //put edit here
+                onClick = {navController.navigate("editTask/${item.task.taskId}")},
                 modifier = Modifier.fillParentMaxWidth(),
                 viewModel = viewModel
             )
@@ -87,6 +93,7 @@ private fun TaskListItem(
     viewModel: CategoryTaskViewModel
 ) {
     val coroutineScope = rememberCoroutineScope()
+    //val coroutineScope = rememberCoroutineScope()
     ConstraintLayout(modifier = modifier.clickable { onClick() }) {
         val (divider, taskTitle, taskCategory, icon, date) = createRefs()
         Divider(
@@ -136,7 +143,7 @@ private fun TaskListItem(
 
         // date
         Text(
-            text = task.taskDate.toDateString(),
+            text = task.reminderTime.toDateString(),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.caption,
@@ -156,7 +163,12 @@ private fun TaskListItem(
 
         // icon
         IconButton(
-            onClick = {},
+            onClick = {
+                coroutineScope.launch {
+                    //task id should come when it is clicked
+                    viewModel.deleteTask(task)
+                }
+                      },
             modifier = Modifier
                 .size(50.dp)
                 .padding(6.dp)

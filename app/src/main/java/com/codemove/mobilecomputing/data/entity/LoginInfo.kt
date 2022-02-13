@@ -9,10 +9,12 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "logininfos",
     indices = [
+        Index("user_id", unique = true),
         Index("username", unique = true)
     ]
 )
 data class LoginInfo(
-    @PrimaryKey(autoGenerate = false) @ColumnInfo(name = "username") val username: String,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "user_id") val userId: Long=0,
+    @ColumnInfo(name = "username") val username: String,
     @ColumnInfo(name = "password") val password: String
 )

@@ -1,5 +1,6 @@
 package com.codemave.mobilecomputing.ui.edit
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -14,25 +15,31 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.codemave.mobilecomputing.data.entity.LoginInfo
 import com.codemave.mobilecomputing.ui.task.TaskViewModel
 
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import java.util.*
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun Edit(
     navController: NavController,
+    username: String,
     viewModel: EditViewModel = viewModel()
 ) {
-    //val viewState by viewModel.state.collectAsState()
+
     val coroutineScope = rememberCoroutineScope()
-    //val username = rememberSaveable { mutableStateOf("") }
-    //val password = rememberSaveable { mutableStateOf("") }
-    //val amount = rememberSaveable { mutableStateOf("") }
+
     Surface(modifier = Modifier.fillMaxSize()) {
-        val username = rememberSaveable { mutableStateOf("") }
+        val newUsername = rememberSaveable { mutableStateOf("") }
+        val newPassword = rememberSaveable { mutableStateOf("") }
         val password = rememberSaveable { mutableStateOf("") }
+        coroutineScope.launch{
+            password.value = viewModel.getPasswordWithUsername(username = username)?.password ?: ""
+        }
+
 
         Column(
             modifier = Modifier
@@ -49,9 +56,9 @@ fun Edit(
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
-                value = username.value,
-                onValueChange = { data -> username.value = data },
-                label = { Text("Username") },
+                value = newUsername.value,
+                onValueChange = { data -> newUsername.value = data },
+                label = { Text(username) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
@@ -59,9 +66,11 @@ fun Edit(
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
-                value = password.value,
-                onValueChange = { data -> password.value = data },
-                label = { Text("Password") },
+
+                value = newPassword.value,
+                onValueChange = { data -> newPassword.value = data },
+
+                label = { Text(password.value) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password
@@ -73,18 +82,19 @@ fun Edit(
             Button(
                 onClick = {
                     coroutineScope.launch {
-                        viewModel.saveLoginInfo(
-                            com.codemave.mobilecomputing.data.entity.LoginInfo(
-                                username = username.value,
-                                password = password.value,
-
+                        print("hey")
+                        val loginInfo: LoginInfo? = viewModel.getPasswordWithUsername(username = username)
+                        val newLoginIndo= loginInfo?.copy(username= newUsername.value,
+                            password= newPassword.value)
+                        if (newLoginIndo != null) {
+                            viewModel.updateLogin(
+                                newLoginIndo
                             )
-                        )
-
+                        }
                     }
                     navController.navigate("login")
                 },
-                enabled = username!=null && password.value.length>=6,
+                enabled = newUsername!=null && newPassword.value.length>=6,
                 //if(username.value=="bgmrsln" &&  password.value== "1234") true else false,
                 modifier = Modifier
                     .fillMaxWidth()

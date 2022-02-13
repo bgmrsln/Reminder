@@ -17,12 +17,11 @@ class EditViewModel(
     private val loginInfoRepository: LoginInfoRepository = Graph.loginInfoRepository,
     //private val categoryRepository: CategoryRepository = Graph.categoryRepository
 ): ViewModel() {
-    //private val _state = MutableStateFlow(LoginInfoViewState())
-
-
-
-    suspend fun saveLoginInfo(loginInfo: LoginInfo): Long {
-        return loginInfoRepository.addLoginInfo(loginInfo)
+    suspend fun updateLogin(loginInfo: LoginInfo){
+        return this.loginInfoRepository.updateLogin(loginInfo)
+    }
+    suspend fun getPasswordWithUsername(username: String): LoginInfo?{
+        return loginInfoRepository.getPasswordWithUsername(username)
     }
 
 

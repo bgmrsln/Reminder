@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.codemave.mobilecomputing.data.entity.LoginInfo
 import com.codemave.mobilecomputing.data.entity.Task
 import kotlinx.coroutines.flow.Flow
 
@@ -18,6 +19,9 @@ abstract class TaskDao {
     """)
     abstract fun tasksFromCategory(categoryId: Long): Flow<List<TaskToCategory>>
 
+    @Query(value = "SELECT * FROM tasks WHERE id = :taskId")
+    abstract suspend fun getTaskWithTaskId(taskId: Long): Task?
+
     @Query("""SELECT * FROM tasks WHERE id = :taskId""")
     abstract fun task(taskId: Long): Task?
 
@@ -25,7 +29,7 @@ abstract class TaskDao {
     abstract suspend fun insert(entity: Task): Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun update(entity: Task)
+    abstract suspend fun update(entity: Task): Int
 
     @Delete
     abstract suspend fun delete(entity: Task): Int

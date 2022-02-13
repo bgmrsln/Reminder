@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.codemave.mobilecomputing.ui.edit.Edit
+import com.codemave.mobilecomputing.ui.editTask.EditTask
 import com.codemave.mobilecomputing.ui.home.Home
 
 import com.codemave.mobilecomputing.ui.login.Login
@@ -22,9 +23,11 @@ fun MobileComputingApp(
         composable(route = "login") {
             Login(navController = appState.navController)
         }
-        composable(route = "home") {
+        composable(route = "home/{username}") {
+            entry->
             Home(
-                navController = appState.navController
+                navController = appState.navController,
+                entry.arguments?.getString("username")?:""
             )
         }
         composable(route = "task") {
@@ -33,12 +36,30 @@ fun MobileComputingApp(
         composable(route= "signup") {
             Signup(onBackPress = appState::navigateBack)
         }
-        composable(route= "profile"){
-            Profile(navController= appState.navController)
+        composable(route= "profile/{username}"){
+            entry->
+            Profile(
+                navController= appState.navController,
+                entry.arguments?.getString("username")?:""
+
+            )
         }
 
-        composable(route= "edit"){
-            Edit(navController= appState.navController)
+        composable(route= "edit/{username}"){
+            entry->
+            Edit(
+                navController= appState.navController,
+                entry.arguments?.getString("username")?:""
+            )
         }
+        composable(route= "editTask/{taskId}"){
+
+            entry-> EditTask(onBackPress = appState::navigateBack,
+        entry.arguments?.getString("taskId")?:""
+        )
+        }
+
+
+
     }
 }

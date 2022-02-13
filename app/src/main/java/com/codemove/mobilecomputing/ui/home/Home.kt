@@ -23,20 +23,23 @@ import com.google.accompanist.insets.systemBarsPadding
 
 @Composable
 fun Home(
+
+    navController: NavController,
+    username: String,
     viewModel: HomeViewModel = viewModel(),
-    navController: NavController
 ) {
     val viewState by viewModel.state.collectAsState()
 
     val selectedCategory = viewState.selectedCategory
-
+    println(username)
     if (viewState.categories.isNotEmpty() && selectedCategory != null) {
         Surface(modifier = Modifier.fillMaxSize()) {
             HomeContent(
                 selectedCategory = selectedCategory,
                 categories = viewState.categories,
                 onCategorySelected = viewModel::onCategorySelected,
-                navController = navController
+                navController = navController,
+                username= username
             )
         }
     }
@@ -49,6 +52,7 @@ fun HomeContent(
     categories: List<Category>,
     onCategorySelected: (Category) -> Unit,
     navController: NavController,
+    username: String
 ) {
     Scaffold(
         modifier = Modifier.padding(bottom = 24.dp),
@@ -78,8 +82,11 @@ fun HomeContent(
 
             HomeAppBar(
                 backgroundColor = appBarColor,
-                navController= navController
+                navController= navController,
+                username= username
             )
+
+
 
             CategoryTabs(
                 categories = categories,
@@ -89,16 +96,21 @@ fun HomeContent(
 
             CategoryTask(
                 modifier = Modifier.fillMaxSize(),
-                categoryId = selectedCategory.id
+                categoryId = selectedCategory.id,
+                navController = navController
+
             )
         }
     }
 }
 
+
+
 @Composable
 private fun HomeAppBar(
     backgroundColor: Color,
-    navController: NavController
+    navController: NavController,
+    username: String
 
 ) {
     TopAppBar(
@@ -116,7 +128,7 @@ private fun HomeAppBar(
             IconButton( onClick = {} ) {
                 Icon(imageVector = Icons.Filled.Search, contentDescription = stringResource(R.string.search))
             }
-            IconButton( onClick = { navController.navigate("profile")} ) {
+            IconButton( onClick = { navController.navigate("profile/${username}")} ) {
                 Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = stringResource(R.string.account))
             }
             IconButton( onClick = { navController.navigate("login")} ) {

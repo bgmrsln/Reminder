@@ -12,9 +12,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
+    private val loginInfoRepository: LoginInfoRepository = Graph.loginInfoRepository,
 
 ) : ViewModel() {
-    private val _selectedLogin = MutableStateFlow(LoginInfo("bgmrsln","123456"))
+    private val _selectedLogin = MutableStateFlow(LoginInfo(username="bgmrsln",password="123456"))
     private val _state = MutableStateFlow(ProfileViewState(selectedLoginInfo = _selectedLogin.value))
 
 
@@ -23,6 +24,9 @@ class ProfileViewModel(
 
     fun onLoginSelected(login: LoginInfo) {
         _selectedLogin.value = login
+    }
+    suspend fun getPasswordWithUsername(username: String): LoginInfo?{
+        return loginInfoRepository.getPasswordWithUsername(username)
     }
 
 }

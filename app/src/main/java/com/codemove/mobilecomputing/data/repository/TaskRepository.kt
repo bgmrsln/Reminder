@@ -1,5 +1,6 @@
 package com.codemave.mobilecomputing.data.repository
 
+import com.codemave.mobilecomputing.data.entity.LoginInfo
 import com.codemave.mobilecomputing.data.entity.Task
 import com.codemave.mobilecomputing.data.room.TaskDao
 import com.codemave.mobilecomputing.data.room.TaskToCategory
@@ -23,6 +24,9 @@ class TaskRepository(
      * Add a new [Task] to the task store
      */
     suspend fun addTask(task: Task) = taskDao.insert(task)
+    suspend fun updateTask(task: Task)= taskDao.update(task)
+    //gets a task with task Id
+    suspend fun task(taskId: Long): Task? = taskDao.getTaskWithTaskId(taskId)
 
     suspend fun deleteTask(task:Task)= taskDao.delete(task)
 }

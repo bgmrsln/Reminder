@@ -5,6 +5,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.time.LocalDate
+
+import java.util.*
 
 @Entity(
     tableName = "tasks",
@@ -25,8 +28,16 @@ import androidx.room.PrimaryKey
 
 data class Task(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val taskId: Long = 0,
-    @ColumnInfo(name = "task_title") val taskTitle: String,
-    @ColumnInfo(name = "task_date") val taskDate: Long,
+    @ColumnInfo(name = "message") val taskTitle: String,
+    @ColumnInfo(name= "location_x") val taskLocationX: Long,
+    @ColumnInfo(name= "location_y") val taskLocationY: Long,
+    @ColumnInfo(name= "reminder_time") val reminderTime: Long,
+    @ColumnInfo(name = "creation_time") val creationTime: Long,
+    @ColumnInfo(name= "creator_id") val creatorId: String,
+    @ColumnInfo(name= "reminder_seen") val reminderSeen: Long?,
     @ColumnInfo(name = "task_category_id") val taskCategoryId: Long,
-    @ColumnInfo(name = "task_amount") val taskAmount: Double
-)
+
+
+
+
+    )

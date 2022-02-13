@@ -87,7 +87,7 @@ fun Login(
 
             Button(
                 onClick = {
-                    var loginInfo= LoginInfo("bgmrsln", "123456")
+                    var loginInfo= LoginInfo(username="bgmrsln", password="123456")
                     coroutineScope.launch {
                         loginInfo=  com.codemave.mobilecomputing.data.entity.LoginInfo(
                             username = username.value,
@@ -99,8 +99,9 @@ fun Login(
                                 loginInfo
                             )
                         ){
-
-                            navController.navigate("home")
+                            println(username.value)
+                            navController.navigate("home/${username.value}")
+                            //
                         }
 
                     }

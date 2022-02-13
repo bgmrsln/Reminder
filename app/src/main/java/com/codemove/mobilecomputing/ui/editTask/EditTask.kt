@@ -1,7 +1,6 @@
-package com.codemave.mobilecomputing.ui.task
+package com.codemave.mobilecomputing.ui.editTask
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,20 +39,24 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codemave.mobilecomputing.data.entity.Category
+import com.codemave.mobilecomputing.data.entity.Task
+
 import com.google.accompanist.insets.systemBarsPadding
 import java.util.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 
-@RequiresApi(Build.VERSION_CODES.O)
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun Task(
+fun EditTask(
+    //I can send the task as a parameter to here
     onBackPress: () -> Unit,
-    viewModel: TaskViewModel = viewModel()
+    taskId: String,
+    viewModel: EditTaskViewModel = viewModel()
 ) {
     val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    val oldMessage = rememberSaveable { mutableStateOf("") }
     val title = rememberSaveable { mutableStateOf("") }
     val category = rememberSaveable { mutableStateOf("") }
     val reminderTime = rememberSaveable { mutableStateOf("") }
@@ -80,10 +83,20 @@ fun Task(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier.padding(16.dp)
             ) {
+                coroutineScope.launch {
+                    //task id should come when it is clicked
+                    val task= viewModel.getTaskwithTaskId(taskId.toLong())
+                    if (task != null) {
+                        oldMessage.value= task.taskTitle
+                    }
+
+                }
                 OutlinedTextField(
+
                     value = title.value,
                     onValueChange = { title.value = it },
-                    label = { Text(text = "Task message")},
+
+                    label = { Text(text = oldMessage.value)},
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -106,29 +119,32 @@ fun Task(
                 Button(
                     enabled = true,
                     onClick = {
-                        coroutineScope.launch {
-                            viewModel.saveTask(
-                                com.codemave.mobilecomputing.data.entity.Task(
-                                    taskTitle = title.value,
-                                    //update time
 
+                        coroutineScope.launch {
+                            //task id should come when it is clicked
+                            val task= viewModel.getTaskwithTaskId(taskId.toLong())
+                            val newTask=
+                                task?.copy(taskTitle = title.value,
                                     reminderTime = sdf.parse(reminderTime.value).getTime(),
-                                    creationTime = System.currentTimeMillis(),
+                                    creationTime = Date().time,
                                     taskCategoryId = getCategoryId(viewState.categories, category.value),
                                     taskLocationX = 0,
                                     taskLocationY = 0,
                                     creatorId = "b",
-                                    reminderSeen = null
                                 )
-                            )
+                            if (newTask != null) {
+                                viewModel.updateTask(newTask)
+                            }
                         }
+
+
                         onBackPress()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .size(55.dp)
                 ) {
-                    Text("Save task")
+                    Text("Save edited task")
                 }
             }
         }
@@ -141,7 +157,7 @@ private fun getCategoryId(categories: List<Category>, categoryName: String): Lon
 
 @Composable
 private fun CategoryListDropdown(
-    viewState: TaskViewState,
+    viewState: EditTaskViewState,
     category: MutableState<String>
 ) {
     var expanded by remember { mutableStateOf(false) }
