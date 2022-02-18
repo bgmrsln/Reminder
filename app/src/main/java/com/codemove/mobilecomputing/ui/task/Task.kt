@@ -1,6 +1,7 @@
 package com.codemave.mobilecomputing.ui.task
 
 import android.os.Build
+import android.widget.DatePicker
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -92,15 +93,17 @@ fun Task(
                     category = category
                 )
                 Spacer(modifier = Modifier.height(10.dp))
+
                 OutlinedTextField(
                     value = reminderTime.value,
                     onValueChange = { reminderTime.value = it },
-                    label = { Text(text = "Due Date as yyyy/MM/dd")},
+                    label = { Text(text = "Due Date as yyyy/MM/dd hh:mm")},
                     modifier = Modifier.fillMaxWidth(),
 
                 )
+
                 Spacer(modifier = Modifier.height(10.dp))
-                val sdf=  SimpleDateFormat("yyyy/MM/dd")
+                val sdf=  SimpleDateFormat("yyyy/MM/dd hh:mm")
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
@@ -113,12 +116,15 @@ fun Task(
                                     //update time
 
                                     reminderTime = sdf.parse(reminderTime.value).getTime(),
-                                    creationTime = System.currentTimeMillis(),
+                                    creationTime = Date().time ,
+                                    //System.currentTimeMillis(),
                                     taskCategoryId = getCategoryId(viewState.categories, category.value),
                                     taskLocationX = 0,
                                     taskLocationY = 0,
                                     creatorId = "b",
-                                    reminderSeen = null
+                                    reminderSeen = null,
+                                    bool = if(sdf.parse(reminderTime.value).getTime() <= Date().time) true else false
+
                                 )
                             )
                         }

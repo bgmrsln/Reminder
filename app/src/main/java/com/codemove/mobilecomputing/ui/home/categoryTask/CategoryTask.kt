@@ -143,22 +143,22 @@ private fun TaskListItem(
 
         // date
         Text(
-            text = task.reminderTime.toDateString(),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.caption,
-            modifier = Modifier.constrainAs(date) {
-                linkTo(
-                    start = taskCategory.end,
-                    end = icon.start,
-                    startMargin = 8.dp,
-                    endMargin = 16.dp,
-                    bias = 0f // float this towards the start. this was is the fix we needed
-                )
-                centerVerticallyTo(taskCategory)
-                top.linkTo(taskTitle.bottom, 6.dp)
-                bottom.linkTo(parent.bottom, 10.dp)
-            }
+                text = task.reminderTime.toDateString(),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        style = MaterialTheme.typography.caption,
+        modifier = Modifier.constrainAs(date) {
+            linkTo(
+                start = taskCategory.end,
+                end = icon.start,
+                startMargin = 8.dp,
+                endMargin = 16.dp,
+                bias = 0f // float this towards the start. this was is the fix we needed
+            )
+            centerVerticallyTo(taskCategory)
+            top.linkTo(taskTitle.bottom, 6.dp)
+            bottom.linkTo(parent.bottom, 10.dp)
+        }
         )
 
         // icon
@@ -186,11 +186,9 @@ private fun TaskListItem(
     }
 }
 
-private fun Date.formatToString(): String {
-    return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(this)
-}
 
-private fun Long.toDateString(): String {
-    return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(Date(this))
+
+public fun Long.toDateString(): String {
+    return SimpleDateFormat("MMMM dd, yyyy hh:mm", Locale.getDefault()).format(Date(this))
 
 }

@@ -31,7 +31,7 @@ fun Home(
     val viewState by viewModel.state.collectAsState()
 
     val selectedCategory = viewState.selectedCategory
-    println(username)
+
     if (viewState.categories.isNotEmpty() && selectedCategory != null) {
         Surface(modifier = Modifier.fillMaxSize()) {
             HomeContent(

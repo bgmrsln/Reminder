@@ -8,7 +8,9 @@ import com.codemave.mobilecomputing.data.repository.TaskRepository
 import com.codemave.mobilecomputing.data.room.TaskToCategory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 class CategoryTaskViewModel(
@@ -22,11 +24,20 @@ class CategoryTaskViewModel(
 
     init {
         viewModelScope.launch {
+
             taskRepository.tasksInCategory(categoryId).collect { list ->
+
+                val filteredList2= list.filter {
+                    if (it.task.reminderTime<= Date().time){
+                        taskRepository.updateTask(it.task.copy(bool= true))
+                    }
+                    it.task.bool
+                    }
                 _state.value = CategoryTaskViewState(
-                    tasks = list
+                    tasks = filteredList2
                 )
             }
+
         }
     }
     suspend fun deleteTask(task: Task): Int {

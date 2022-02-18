@@ -36,6 +36,8 @@ data class Task(
     @ColumnInfo(name= "creator_id") val creatorId: String,
     @ColumnInfo(name= "reminder_seen") val reminderSeen: Long?,
     @ColumnInfo(name = "task_category_id") val taskCategoryId: Long,
+    @ColumnInfo(name = "bool") val bool: Boolean,
+
 
 
 
