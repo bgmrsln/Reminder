@@ -32,7 +32,7 @@ class CategoryTaskViewModel(
                         taskRepository.updateTask(it.task.copy(bool= true))
                     }
                     it.task.bool
-                    }
+                }
                 _state.value = CategoryTaskViewState(
                     tasks = filteredList2
                 )

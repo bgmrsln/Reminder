@@ -4,28 +4,14 @@ import android.os.Build
 import android.widget.DatePicker
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -37,9 +23,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.codemave.mobilecomputing.R
 import com.codemave.mobilecomputing.data.entity.Category
 import com.google.accompanist.insets.systemBarsPadding
 import java.util.*
@@ -101,11 +89,39 @@ fun Task(
                     modifier = Modifier.fillMaxWidth(),
 
                 )
+                Spacer(modifier = Modifier.height(40.dp))
+                val isChecked= remember{ mutableStateOf(false)}
+                Row(modifier = Modifier
 
-                Spacer(modifier = Modifier.height(10.dp))
+                    .systemBarsPadding()){
+
+
+                    Text(text = "Do you want notifications?")
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Checkbox(checked = isChecked.value, onCheckedChange = {isChecked.value= it} )
+                }
+
+
+
+
+                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(40.dp))
+                val isMultipleChecked= remember{ mutableStateOf(false)}
+                Row(modifier = Modifier
+
+                    .systemBarsPadding()){
+
+
+                    Text(text = "Do you want a 5-minute earlier reminder?")
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Checkbox(checked = isMultipleChecked.value, onCheckedChange = {isMultipleChecked.value= it} )
+                }
+
+
+
+
+                Spacer(modifier = Modifier.height(40.dp))
                 val sdf=  SimpleDateFormat("yyyy/MM/dd hh:mm")
-
-                Spacer(modifier = Modifier.height(10.dp))
                 Button(
                     enabled = true,
                     onClick = {
@@ -123,7 +139,9 @@ fun Task(
                                     taskLocationY = 0,
                                     creatorId = "b",
                                     reminderSeen = null,
-                                    bool = if(sdf.parse(reminderTime.value).getTime() <= Date().time) true else false
+                                    bool = if(sdf.parse(reminderTime.value).getTime() <= Date().time) true else false,
+                                    notificationWanted = isChecked.value,
+                                    earlyNotification= isMultipleChecked.value
 
                                 )
                             )

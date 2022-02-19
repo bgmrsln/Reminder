@@ -37,8 +37,14 @@ class TaskViewModel(
         get() = _state
 
     suspend fun saveTask(task: Task): Long {
-        newReminderNotification(task)
-        setOneTimeNotification(task)
+        if(task.notificationWanted){
+            newReminderNotification(task)
+            setOneTimeNotification(task)
+        }
+        if(task.earlyNotification){
+            setOneTimeEarlyNotification(task)
+        }
+
         return taskRepository.addTask(task)
     }
 
@@ -57,6 +63,18 @@ private fun reminderTimeNotification(task: Task){
     val builder = NotificationCompat.Builder(Graph.appContext, "CHANNEL_ID")
         .setSmallIcon(R.drawable.ic_launcher_background)
         .setContentTitle("You have a reminder")
+        .setContentText(task.taskTitle)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
+    with(NotificationManagerCompat.from(Graph.appContext)) {
+        notify(notificationId, builder.build())
+    }
+
+}
+private fun earlyReminderTimeNotification(task: Task){
+    val notificationId = 4
+    val builder = NotificationCompat.Builder(Graph.appContext, "CHANNEL_ID")
+        .setSmallIcon(R.drawable.ic_launcher_background)
+        .setContentTitle("You have a task due in 5 minutes")
         .setContentText(task.taskTitle)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
     with(NotificationManagerCompat.from(Graph.appContext)) {
@@ -91,6 +109,36 @@ private fun setOneTimeNotification(task: Task){
             else{
 
                 //createSuccessNotification(task)
+            }
+        }
+}
+private fun setOneTimeEarlyNotification(task: Task){
+    val workManager= WorkManager.getInstance(Graph.appContext)
+    val constraints= androidx.work.Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
+    val data= Data.Builder()
+    data.putLong("id", task.taskId)
+
+
+    //can i make it wait until the time comes?? maybe with a time parameter to this function
+    val notificationWorker= OneTimeWorkRequestBuilder<NotificationWorker>()
+        .setInitialDelay(task.reminderTime-Date().time- 300000, TimeUnit.MILLISECONDS)
+        .setConstraints(constraints)
+        .setInputData(data.build())
+        .build()
+
+    workManager.enqueue(notificationWorker)
+
+    //Monitoring for state of work
+    workManager.getWorkInfoByIdLiveData(notificationWorker.id)
+        .observeForever { workInfo ->
+            if(workInfo.state == WorkInfo.State.SUCCEEDED) {
+                earlyReminderTimeNotification(task)
+            }
+            else{
+
+
             }
         }
 }

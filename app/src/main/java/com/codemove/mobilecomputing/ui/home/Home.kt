@@ -1,5 +1,6 @@
 package com.codemave.mobilecomputing.ui.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -10,8 +11,13 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -34,6 +40,12 @@ fun Home(
 
     if (viewState.categories.isNotEmpty() && selectedCategory != null) {
         Surface(modifier = Modifier.fillMaxSize()) {
+            Image(painter = painterResource(id = R.drawable.clouds),
+                contentDescription =null,
+                modifier = Modifier,
+                alignment = Alignment.Center,
+                contentScale = ContentScale.FillBounds
+            )
             HomeContent(
                 selectedCategory = selectedCategory,
                 categories = viewState.categories,
@@ -41,6 +53,7 @@ fun Home(
                 navController = navController,
                 username= username
             )
+
         }
     }
 }
@@ -56,12 +69,12 @@ fun HomeContent(
 ) {
     Scaffold(
         modifier = Modifier.padding(bottom = 24.dp),
-        backgroundColor= MaterialTheme.colors.secondary.copy(alpha = 0.37f),
+        backgroundColor= MaterialTheme.colors.primary.copy(alpha = 0.37f),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(route = "task") },
                 contentColor = Color.White,
-                backgroundColor= MaterialTheme.colors.primary.copy(alpha = 0.37f),
+                backgroundColor= MaterialTheme.colors.secondary,
                 modifier = Modifier.padding(all = 20.dp)
             ) {
                 Icon(
@@ -78,7 +91,7 @@ fun HomeContent(
                 .systemBarsPadding()
                 .fillMaxWidth()
         ) {
-            val appBarColor = MaterialTheme.colors.secondary.copy(alpha = 0.37f)
+            val appBarColor = MaterialTheme.colors.primary.copy(alpha = 0.37f)
 
             HomeAppBar(
                 backgroundColor = appBarColor,
@@ -117,7 +130,7 @@ private fun HomeAppBar(
         title = {
             Text(
                 text = stringResource(R.string.app_name),
-                color = MaterialTheme.colors.primary,
+                color =MaterialTheme.colors.secondary,
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .heightIn(max = 24.dp)

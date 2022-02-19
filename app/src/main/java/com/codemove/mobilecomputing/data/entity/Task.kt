@@ -36,7 +36,11 @@ data class Task(
     @ColumnInfo(name= "creator_id") val creatorId: String,
     @ColumnInfo(name= "reminder_seen") val reminderSeen: Long?,
     @ColumnInfo(name = "task_category_id") val taskCategoryId: Long,
-    @ColumnInfo(name = "bool") val bool: Boolean,
+    @ColumnInfo(name = "bool") val bool: Boolean, //is due time come
+    @ColumnInfo(name = "notification_wanted") val notificationWanted: Boolean,
+    @ColumnInfo(name = "early_notification") val earlyNotification: Boolean,
+
+
 
 
 
