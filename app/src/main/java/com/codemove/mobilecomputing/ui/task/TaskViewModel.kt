@@ -5,7 +5,13 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.NotificationManagerCompat.from
@@ -25,12 +31,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.TimeUnit
-
+private var notificationIds=0
 class TaskViewModel(
     private val taskRepository: TaskRepository = Graph.taskRepository,
     private val categoryRepository: CategoryRepository = Graph.categoryRepository,
     private val context: Context= Graph.appContext
 ): ViewModel() {
+
     private val _state = MutableStateFlow(TaskViewState())
 
     val state: StateFlow<TaskViewState>
@@ -59,24 +66,29 @@ class TaskViewModel(
     }
 }
 private fun reminderTimeNotification(task: Task){
-    val notificationId = 3
+    val notificationId = notificationIds
+    notificationIds +=1
+
     val builder = NotificationCompat.Builder(Graph.appContext, "CHANNEL_ID")
-        .setSmallIcon(R.drawable.ic_launcher_background)
+        .setSmallIcon(R.drawable.reminders)
         .setContentTitle("You have a reminder")
         .setContentText(task.taskTitle)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setColor(0xA61C0D)
     with(NotificationManagerCompat.from(Graph.appContext)) {
         notify(notificationId, builder.build())
     }
 
 }
 private fun earlyReminderTimeNotification(task: Task){
-    val notificationId = 4
+    val notificationId = notificationIds
+    notificationIds +=1
     val builder = NotificationCompat.Builder(Graph.appContext, "CHANNEL_ID")
-        .setSmallIcon(R.drawable.ic_launcher_background)
+        .setSmallIcon(R.drawable.early)
         .setContentTitle("You have a task due in 5 minutes")
         .setContentText(task.taskTitle)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setColor(0xEDED21)
     with(NotificationManagerCompat.from(Graph.appContext)) {
         notify(notificationId, builder.build())
     }
@@ -89,8 +101,6 @@ private fun setOneTimeNotification(task: Task){
         .build()
     val data= Data.Builder()
     data.putLong("id", task.taskId)
-
-
     //can i make it wait until the time comes?? maybe with a time parameter to this function
     val notificationWorker= OneTimeWorkRequestBuilder<NotificationWorker>()
         .setInitialDelay(task.reminderTime-Date().time, TimeUnit.MILLISECONDS)
@@ -142,44 +152,21 @@ private fun setOneTimeEarlyNotification(task: Task){
             }
         }
 }
-private fun createSuccessNotification(task:Task){
-    val notificationId =1
-    val builder= NotificationCompat.Builder(Graph.appContext, "CHANNEL_ID")
-        .setSmallIcon(R.drawable.ic_launcher_background)
-        .setContentTitle(task.taskTitle)
-        .setContentText("didnt work ${task.reminderTime- Date().time}")
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-    with(from(Graph.appContext)){
-        //notification id is unique for each notification that you define
-        notify(notificationId, builder.build())
-    }
 
-}
 private fun newReminderNotification(task: Task){
-    val notificationId= 4
+    val notificationId = notificationIds
+    notificationIds +=1
     val builder= NotificationCompat.Builder(Graph.appContext, "CHANNEL_ID")
-        .setSmallIcon(R.drawable.ic_launcher_background)
+        .setSmallIcon(R.drawable.add_reminder)
         .setContentTitle("New reminder")
         .setContentText("Job is due to: ${task.reminderTime.toDateString()}\n ${task.taskTitle}")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setStyle(NotificationCompat.BigTextStyle().bigText("Job is due to: ${task.reminderTime.toDateString()}\n ${task.taskTitle}"))
+        .setColor(0xFF1C5984.toInt())
     with(from(Graph.appContext)){
         //notification id is unique for each notification that you define
         notify(notificationId, builder.build())
 
-    }
-
-}
-private fun createErrorNotification(){
-    val notificationId = 2
-    val builder= NotificationCompat.Builder(Graph.appContext, "CHANNEL_ID")
-        .setSmallIcon(R.drawable.ic_launcher_background)
-        .setContentTitle("h ey!")
-        .setContentText("You have a reminder error ")
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-    with(from(Graph.appContext)){
-        //notification id is unique for each notification that you define
-        notify(notificationId, builder.build())
     }
 
 }

@@ -105,7 +105,7 @@ fun Task(
 
 
                 Spacer(modifier = Modifier.height(40.dp))
-                Spacer(modifier = Modifier.height(40.dp))
+
                 val isMultipleChecked= remember{ mutableStateOf(false)}
                 Row(modifier = Modifier
 
